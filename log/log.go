@@ -41,17 +41,17 @@ func init() {
 
 	//color print set
 	logColorMap[1] = make(map[int]string)
-	logColorMap[1][level_debug] = fmt.Sprintf("[%sDEBUG%s] ", blue, reset)
-	logColorMap[1][level_info] = fmt.Sprintf("[%sINFO%s] ", green, reset)
-	logColorMap[1][level_warn] = fmt.Sprintf("[%sWARN%s] ", red, reset)
-	logColorMap[1][level_fatal] = fmt.Sprintf("[%sFATAL%s] ", yellow, reset)
+	logColorMap[1][level_debug] = fmt.Sprintf("%sDEBUG%s ", blue, reset)
+	logColorMap[1][level_info] = fmt.Sprintf("%sINFO%s ", green, reset)
+	logColorMap[1][level_warn] = fmt.Sprintf("%sWARN%s ", red, reset)
+	logColorMap[1][level_fatal] = fmt.Sprintf("%sFATAL%s ", yellow, reset)
 
 	//no color print set
 	logColorMap[0] = make(map[int]string)
-	logColorMap[0][level_debug] = "[DEBUG] "
-	logColorMap[0][level_info] = "[INFO] "
-	logColorMap[0][level_warn] = "[WARN] "
-	logColorMap[0][level_fatal] = "[FATAL] "
+	logColorMap[0][level_debug] = "DEBUG "
+	logColorMap[0][level_info] = "INFO "
+	logColorMap[0][level_warn] = "WARN "
+	logColorMap[0][level_fatal] = "FATAL "
 
 	//init default logger
 	defaultLogger = NewLogger(LogConf{"", "ALL", 0}).SetTraceLevel(4).EnableColor()
@@ -93,7 +93,8 @@ func NewLogger(cfg LogConf) *Logger {
 		l.level = level_off
 	}
 
-	l.Logger = log.New(os.Stderr, "", log.Ldate|log.Lmicroseconds|log.Lshortfile)
+	l.Logger = log.New(os.Stderr, "", log.LstdFlags)
+	//l.Logger = log.New(os.Stderr, "", log.Ldate|log.Lmicroseconds|log.Lshortfile)
 	l.setup_file()
 
 	return l
