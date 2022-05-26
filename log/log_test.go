@@ -7,7 +7,7 @@ import (
 
 func Test_log(t *testing.T) {
 	// t.Fatal("not implemented")
-	log := NewLogger(LogConf{"./test.log-*-*-*", "ALL", 1})
+	log := NewLogger(LogConf{"./testlogs/test.log-*-*-*", "ALL", 1})
 	log.Infof("This is Logger:%s", "hello")
 	log.Info("This is Logger", errors.New("Hello"))
 	log.Debugf("This is Logger:%s", "hello")
@@ -22,7 +22,7 @@ func Test_log(t *testing.T) {
 }
 
 func Benchmark_log(b *testing.B) {
-	log := NewLogger(LogConf{"./logs/test.log", "ALL", 1})
+	log := NewLogger(LogConf{"./testlogs/test.log", "ALL", 1})
 	for n := 0; n < b.N; n++ {
 		log.Fatalf("This is Logger:%s", "hello")
 	}

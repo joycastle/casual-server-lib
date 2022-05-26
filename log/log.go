@@ -26,20 +26,18 @@ const (
 )
 
 var (
-	logLevelMapForConfig map[string]int
-	logColorMap          map[int8]map[int]string
+	logLevelMapForConfig map[string]int          = make(map[string]int)
+	logColorMap          map[int8]map[int]string = make(map[int8]map[int]string)
+	defaultLogger        *Logger
 )
 
 func init() {
-	logLevelMapForConfig = make(map[string]int)
 	logLevelMapForConfig["ALL"] = level_all
 	logLevelMapForConfig["DEBUG"] = level_debug
 	logLevelMapForConfig["INFO"] = level_info
 	logLevelMapForConfig["WARN"] = level_warn
 	logLevelMapForConfig["FATAL"] = level_fatal
 	logLevelMapForConfig["OFF"] = level_off
-
-	logColorMap = make(map[int8]map[int]string)
 
 	//color print set
 	logColorMap[1] = make(map[int]string)
@@ -54,6 +52,9 @@ func init() {
 	logColorMap[0][level_info] = "[INFO] "
 	logColorMap[0][level_warn] = "[WARN] "
 	logColorMap[0][level_fatal] = "[FATAL] "
+
+	//init default logger
+	defaultLogger = NewLogger(LogConf{"", "ALL", 0}).SetTraceLevel(4).EnableColor()
 }
 
 /*
@@ -70,18 +71,20 @@ type LogConf struct {
 }
 
 type Logger struct {
+	*log.Logger
 	cfg           LogConf
-	Logger        *log.Logger
 	Fptr          *os.File
 	Fname         string
 	isEnableColor int8
 	level         int
+	traceLevel    int
 }
 
 func NewLogger(cfg LogConf) *Logger {
 	l := &Logger{
 		cfg:           cfg,
-		isEnableColor: 1,
+		isEnableColor: 0,
+		traceLevel:    3,
 	}
 
 	if level, ok := logLevelMapForConfig[cfg.Level]; ok {
@@ -96,26 +99,33 @@ func NewLogger(cfg LogConf) *Logger {
 	return l
 }
 
-func (l *Logger) EnableColor() {
+func (l *Logger) EnableColor() *Logger {
 	l.isEnableColor = 1
+	return l
 }
 
-func (l *Logger) DisableColor() {
+func (l *Logger) DisableColor() *Logger {
 	l.isEnableColor = 0
+	return l
+}
+
+func (l *Logger) SetTraceLevel(tl int) *Logger {
+	l.traceLevel = tl
+	return l
 }
 
 func (l *Logger) pf(level int, f string, v ...any) {
 	if level < l.level {
 		return
 	}
-	l.Logger.Output(2, logColorMap[l.isEnableColor][level]+fmt.Sprintf(f, v...))
+	l.Logger.Output(l.traceLevel, logColorMap[l.isEnableColor][level]+fmt.Sprintf(f, v...))
 }
 
 func (l *Logger) pln(level int, v ...any) {
 	if level < l.level {
 		return
 	}
-	l.Logger.Output(2, logColorMap[l.isEnableColor][level]+fmt.Sprintln(v...))
+	l.Logger.Output(l.traceLevel, logColorMap[l.isEnableColor][level]+fmt.Sprintln(v...))
 }
 
 func (l *Logger) Debugf(f string, v ...any) {
