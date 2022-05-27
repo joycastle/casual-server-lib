@@ -1,6 +1,14 @@
 package main
 
-import "github.com/joycastle/casual-server-lib/log"
+import (
+	"runtime"
+
+	"github.com/joycastle/casual-server-lib/log"
+)
+
+func init() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
+}
 
 func main() {
 	//log default -------------------------------start

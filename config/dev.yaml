@@ -1,0 +1,12 @@
+logs:
+  error:
+    output: ./error.log
+    level: DEBUG
+  main:
+    output: ./main.log-*-*-*
+    level: INFO
+
+mydefine:
+  - 123
+  - 456
+  - 789
