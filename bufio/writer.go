@@ -17,7 +17,7 @@ type BufioWriter struct {
 }
 
 func NewBufioWriterDefault() *BufioWriter {
-	return NewBufioWriter(100, time.Millisecond*100)
+	return NewBufioWriter(4096, time.Millisecond*200)
 }
 
 func NewBufioWriter(size int, fcyc time.Duration) *BufioWriter {
@@ -34,21 +34,30 @@ func NewBufioWriter(size int, fcyc time.Duration) *BufioWriter {
 func (bw *BufioWriter) SetOutputFile(fd *os.File) {
 	bw.mu.Lock()
 	defer bw.mu.Unlock()
+	lastFd := bw.fd
 	bw.fd = fd
 	bw.writer = bufio.NewWriterSize(fd, bw.size)
+	lastFd.Close()
 }
 
 func (bw *BufioWriter) Close() {
 	bw.mu.Lock()
 	defer bw.mu.Unlock()
-	bw.writer.Flush()
+	if bw.writer != nil {
+		bw.writer.Flush()
+	}
+	if bw.fd != nil {
+		bw.fd.Close()
+	}
 	bw.closeFlag = true
 }
 
 func (bw *BufioWriter) WriteString(msg string) {
 	bw.mu.Lock()
 	defer bw.mu.Unlock()
-	bw.writer.WriteString(msg)
+	if bw.writer != nil {
+		bw.writer.WriteString(msg)
+	}
 }
 
 func (bw *BufioWriter) syncFlush() {
