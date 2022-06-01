@@ -3,6 +3,7 @@ module github.com/joycastle/casual-server-lib
 go 1.18
 
 require (
+	github.com/garyburd/redigo v1.6.3
 	github.com/spf13/viper v1.12.0
 	go.uber.org/zap v1.21.0
 )

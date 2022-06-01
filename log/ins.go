@@ -12,45 +12,45 @@ func Get(sn string) *Logger {
 	if l, ok := loggers[sn]; ok {
 		return l
 	}
-	return defaultLogger
+	return DefaultLogger
 }
 
 func Debugf(f string, v ...any) {
-	defaultLogger.Debugf(f, v...)
+	DefaultLogger.Debugf(f, v...)
 }
 
 func Debug(v ...any) {
-	defaultLogger.Debug(v...)
+	DefaultLogger.Debug(v...)
 }
 
 func Infof(f string, v ...any) {
-	defaultLogger.Infof(f, v...)
+	DefaultLogger.Infof(f, v...)
 }
 
 func Info(v ...any) {
-	defaultLogger.Info(v...)
+	DefaultLogger.Info(v...)
 }
 
 func Warnf(f string, v ...any) {
-	defaultLogger.Warnf(f, v...)
+	DefaultLogger.Warnf(f, v...)
 }
 
 func Warn(v ...any) {
-	defaultLogger.Warn(v...)
+	DefaultLogger.Warn(v...)
 }
 
 func Fatalf(f string, v ...any) {
-	defaultLogger.Fatalf(f, v...)
+	DefaultLogger.Fatalf(f, v...)
 }
 
 func Fatal(v ...any) {
-	defaultLogger.Fatal(v...)
+	DefaultLogger.Fatal(v...)
 }
 
 func EnableColor() {
-	defaultLogger.EnableColor()
+	DefaultLogger.EnableColor()
 }
 
 func DisableColor() {
-	defaultLogger.DisableColor()
+	DefaultLogger.DisableColor()
 }
