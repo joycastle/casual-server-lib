@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	CFG_REDIS                 = "redis"
+	CFG_REDIS                 = "s-redis"
 	CFG_REDIS_ADDR            = "addr"
 	CFG_REDIS_PASSWORD        = "password"
 	CFG_REDIS_MAX_ACTIVE      = "maxactive"
@@ -29,6 +29,10 @@ func init() {
 
 func parseRedis(v *viper.Viper) error {
 	mps := v.GetStringMap(CFG_REDIS)
+
+	if len(mps) == 0 {
+		return ErrFileNotExists
+	}
 
 	for k, v := range mps {
 		vv := v.(map[string]interface{})

@@ -22,6 +22,10 @@ func init() {
 func parseLog(v *viper.Viper) error {
 	mps := v.GetStringMap(CFG_LOG)
 
+	if len(mps) == 0 {
+		return ErrFileNotExists
+	}
+
 	for k, v := range mps {
 		vv := v.(map[string]interface{})
 

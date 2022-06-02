@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"path/filepath"
 	"strings"
@@ -11,6 +12,7 @@ import (
 type ParseFunc func(v *viper.Viper) error
 
 var registerParseFunc []ParseFunc
+var ErrFileNotExists error = errors.New("file not exists")
 
 func RegisterParser(f ParseFunc) {
 	registerParseFunc = append(registerParseFunc, f)
@@ -40,7 +42,7 @@ func InitConfig(fileName string) error {
 	}
 
 	for _, parseHandler := range registerParseFunc {
-		if err := parseHandler(v); err != nil {
+		if err := parseHandler(v); err != nil && err != ErrFileNotExists {
 			return err
 		}
 	}
