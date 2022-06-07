@@ -11,7 +11,7 @@ func Test_config(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if Logs["main"].Output != "./main.log-*-*-*" || Logs["main"].Level != "INFO" {
+	if Logs["main"].Output != "./main.log-*-*-*" || Logs["main"].Level != "INFO" || Logs["main"].TraceOffset != 0 || Logs["error"].TraceOffset != 10 {
 		t.Fatal("parse error")
 	}
 

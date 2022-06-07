@@ -54,7 +54,7 @@ func init() {
 	logColorMap[0][level_fatal] = "FATAL "
 
 	//init default logger
-	DefaultLogger = NewLogger(LogConf{"", "ALL", 0}).SetTraceLevel(4).EnableColor()
+	DefaultLogger = NewLogger(LogConf{"", "ALL", 0, 0}).SetTraceLevel(4).EnableColor()
 }
 
 /*
@@ -65,9 +65,10 @@ log conf demo
 */
 
 type LogConf struct {
-	Output     string
-	Level      string
-	ExpireDays int64
+	Output      string
+	Level       string
+	ExpireDays  int64
+	TraceOffset int
 }
 
 type Logger struct {
@@ -93,8 +94,13 @@ func NewLogger(cfg LogConf) *Logger {
 		l.level = level_off
 	}
 
-	l.Logger = log.New(os.Stderr, "", log.LstdFlags)
-	//l.Logger = log.New(os.Stderr, "", log.Ldate|log.Lmicroseconds|log.Lshortfile)
+	if cfg.TraceOffset > 0 {
+		l.traceLevel = l.traceLevel + cfg.TraceOffset
+		l.Logger = log.New(os.Stderr, "", log.LstdFlags|log.Lshortfile)
+	} else {
+		l.Logger = log.New(os.Stderr, "", log.LstdFlags)
+	}
+
 	l.setup_file()
 
 	return l
