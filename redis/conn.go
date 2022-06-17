@@ -45,7 +45,7 @@ func InitRedis(configs map[string]RedisConf) {
 	redisPoolMap = make(map[string]*redis.Pool, len(configs))
 
 	if logger == nil {
-		logger = log.DefaultLogger
+		logger = log.Default
 	}
 
 	for sn, config := range configs {

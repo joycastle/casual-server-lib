@@ -28,7 +28,7 @@ const (
 var (
 	logLevelMapForConfig map[string]int          = make(map[string]int)
 	logColorMap          map[int8]map[int]string = make(map[int8]map[int]string)
-	DefaultLogger        *Logger
+	Default        *Logger
 )
 
 func init() {
@@ -54,7 +54,7 @@ func init() {
 	logColorMap[0][level_fatal] = "FATAL "
 
 	//init default logger
-	DefaultLogger = NewLogger(LogConf{"", "ALL", 0, 0}).SetTraceLevel(4).EnableColor()
+	Default = NewLogger(LogConf{"", "ALL", 0, 0}).SetTraceLevel(4).EnableColor()
 }
 
 /*

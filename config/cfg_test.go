@@ -22,4 +22,12 @@ func Test_config(t *testing.T) {
 	if Redis["default"].MaxActive != 128 || Redis["default"].MaxIdle != 16 || Redis["default"].ConnectTimeout != time.Millisecond*500 {
 		t.Fatal("Redis", Redis)
 	}
+
+	if Mysql["default-master"].Addr != "127.0.0.1" || Mysql["default-master"].Username != "root" || Mysql["default-slave"].Password != "123456" || Mysql["default-master"].Database != "db_game" {
+		t.Fatal("Mysql", Mysql)
+	}
+
+	if Mysql["default-master"].MaxIdle != 16 || Mysql["default-master"].MaxOpen != 128 || Mysql["default-slave"].MaxLifeTime != 5*time.Minute || Mysql["default-master"].SlowLogger != "slow" {
+		t.Fatal("Mysql", Mysql)
+	}
 }
