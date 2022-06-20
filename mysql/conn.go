@@ -65,7 +65,7 @@ func InitMysql(configs map[string]MysqlConf) error {
 
 			if config.StatLogger != "" {
 				//stats monitor
-				go func() {
+				go func(node string) {
 					//type DBStats struct {
 					//  MaxOpenConnections int // Maximum number of open connections to the database.
 
@@ -94,7 +94,7 @@ func InitMysql(configs map[string]MysqlConf) error {
 
 						log.Get(config.StatLogger).Infof(infos)
 					}
-				}()
+				}(node)
 			}
 		}
 

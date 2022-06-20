@@ -1,6 +1,7 @@
 package mysql
 
 import (
+	"fmt"
 	"testing"
 	"time"
 )
@@ -8,6 +9,21 @@ import (
 func Test_Mysql(t *testing.T) {
 	configs := map[string]MysqlConf{
 		"default-master": MysqlConf{
+			Addr:        "127.0.0.1",
+			Username:    "root",
+			Password:    "123456",
+			Database:    "db_game",
+			Options:     "charset=utf8mb4&parseTime=True",
+			MaxIdle:     16,
+			MaxOpen:     128,
+			MaxLifeTime: time.Second * 300,
+			SlowSqlTime: 0,
+			SlowLogger:  "slow",
+			ErrLogger:   "error",
+			StatLogger:  "stat",
+		},
+
+		"default-slave": MysqlConf{
 			Addr:        "127.0.0.1",
 			Username:    "root",
 			Password:    "123456",
@@ -30,4 +46,7 @@ func Test_Mysql(t *testing.T) {
 	if Get("default-master") == nil {
 		t.Fatal()
 	}
+
+	fmt.Println(mysqlPoolMap)
+	time.Sleep(time.Second * 10)
 }
