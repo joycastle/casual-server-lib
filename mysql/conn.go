@@ -82,7 +82,7 @@ func InitMysql(configs map[string]MysqlConf) error {
 					//  MaxLifetimeClosed int64         // The total number of connections closed due to SetConnMaxLifetime.
 					//}
 					for {
-						time.Sleep(time.Second * 1)
+						time.Sleep(time.Second * 20)
 						stat := sqlDb.Stats()
 						infos := fmt.Sprintf("mysql stat: Connection open:%d, inUse:%d, idle:%d, waitCount:%d, waitDuration:%v dsn:%s",
 							stat.OpenConnections,
