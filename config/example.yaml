@@ -62,3 +62,8 @@ s-mysql:
     errorlog: error
     statlog: stat
 
+s-grpc:
+  default: 
+    addr: 127.0.0.1:9002
+  chat:
+    addr: 127.0.0.1:9001

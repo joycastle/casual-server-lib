@@ -30,4 +30,8 @@ func Test_config(t *testing.T) {
 	if Mysql["default-master"].MaxIdle != 16 || Mysql["default-master"].MaxOpen != 128 || Mysql["default-slave"].MaxLifeTime != 5*time.Minute || Mysql["default-master"].SlowLogger != "slow" {
 		t.Fatal("Mysql", Mysql)
 	}
+
+	if Grpc["default"] != "127.0.0.1:9002" || Grpc["chat"] != "127.0.0.1:9001" {
+		t.Fatal("GRPC", Grpc)
+	}
 }
