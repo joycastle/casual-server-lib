@@ -1,0 +1,8 @@
+logs:
+  error:
+    output: ./error.log
+    level: DEBUG
+    traceoffset: 10
+  main:
+    output: ./main.log-*-*-*
+    level: INFO

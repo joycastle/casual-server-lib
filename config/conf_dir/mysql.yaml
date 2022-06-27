@@ -1,0 +1,27 @@
+s-mysql:
+  default-master:
+    addr: 127.0.0.1
+    username: root
+    password: '123456'
+    database: db_game
+    options: charset=utf8mb4&parseTime=True
+    maxidle: 16
+    maxopen: 128
+    maxlifetime: 300s
+    slowsqltime: 2s
+    slowlog: slow
+    errorlog: error
+    statlog: stat
+  default-slave:
+    addr: 127.0.0.1
+    username: root
+    password: '123456'
+    database: db_game
+    options: charset=utf8mb4&parseTime=True
+    maxidle: 16
+    maxopen: 128
+    maxlifetime: 300s
+    slowsqltime: 2s
+    slowlog: slow
+    errorlog: error
+    statlog: stat

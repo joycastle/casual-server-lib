@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/joycastle/casual-server-lib/util"
 	"github.com/spf13/viper"
 )
 
@@ -18,31 +19,50 @@ func RegisterParser(f ParseFunc) {
 	registerParseFunc = append(registerParseFunc, f)
 }
 
-func InitConfig(fileName string) error {
-	ext := filepath.Ext(fileName)
-	ext = strings.TrimLeft(ext, ".")
+func InitConfig(path string) error {
+	fileFullPathNames := []string{}
 
-	isSupport := false
-	for _, v := range viper.SupportedExts {
-		if v == ext {
-			isSupport = true
-			break
+	defaultViper := viper.New()
+
+	if util.IsDir(path) {
+		fileFullPathNames = util.ReadDirFiles(path)
+	} else {
+		fileFullPathNames = append(fileFullPathNames, path)
+	}
+
+	for _, fileFullPathName := range fileFullPathNames {
+		fpath := filepath.Dir(fileFullPathName)
+		fileFullName := filepath.Base(fileFullPathName)
+		ext := filepath.Ext(fileFullName)
+		ext = strings.TrimLeft(ext, ".")
+
+		isSupport := false
+		for _, v := range viper.SupportedExts {
+			if v == ext {
+				isSupport = true
+				break
+			}
 		}
-	}
-	if !isSupport {
-		return fmt.Errorf("viper not support the format \".%s\"", ext)
-	}
+		if !isSupport {
+			return fmt.Errorf("viper not support the format \".%s\"", ext)
+		}
 
-	v := viper.New()
-	v.SetConfigFile(fileName)
-	v.SetConfigType(ext)
+		v := viper.New()
+		v.SetConfigName(fileFullName)
+		v.SetConfigType(ext)
+		v.AddConfigPath(fpath)
 
-	if err := v.ReadInConfig(); err != nil {
-		return err
+		if err := v.ReadInConfig(); err != nil {
+			return err
+		}
+
+		if err := defaultViper.MergeConfigMap(v.AllSettings()); err != nil {
+			return err
+		}
 	}
 
 	for _, parseHandler := range registerParseFunc {
-		if err := parseHandler(v); err != nil && err != ErrFileNotExists {
+		if err := parseHandler(defaultViper); err != nil && err != ErrFileNotExists {
 			return err
 		}
 	}
