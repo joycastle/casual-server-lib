@@ -9,7 +9,6 @@ s-redis:
     ReadTimeout: 500ms
     WriteTimeout: 1000ms
     TestInterval: 60s
-    errorlog: error
     statlog: stat
   main:
     Addr: 127.0.0.1:6379,127.0.0.1:6379,127.0.0.1:6379
@@ -21,5 +20,4 @@ s-redis:
     ReadTimeout: 500ms
     WriteTimeout: 1000ms
     TestInterval: 60s
-    errorlog: error
     statlog: stat

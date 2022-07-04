@@ -18,7 +18,6 @@ s-redis:
     ReadTimeout: 500ms
     WriteTimeout: 1000ms
     TestInterval: 60s
-    errorlog: error
     statlog: stat
 
   main:
@@ -31,7 +30,6 @@ s-redis:
     ReadTimeout: 500ms
     WriteTimeout: 1000ms
     TestInterval: 60s
-    errorlog: error
     statlog: stat
 
 mydefine:
@@ -64,7 +62,6 @@ s-mysql:
     maxlifetime: 300s
     slowsqltime: 2s
     slowlog: slow
-    errorlog: error
     statlog: stat
 
 s-grpc:

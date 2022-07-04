@@ -17,9 +17,8 @@ func Test_Mysql(t *testing.T) {
 			MaxIdle:     16,
 			MaxOpen:     128,
 			MaxLifeTime: time.Second * 300,
-			SlowSqlTime: 0,
+			SlowSqlTime: 1,
 			SlowLogger:  "slow",
-			ErrLogger:   "error",
 			StatLogger:  "stat",
 		},
 
@@ -32,9 +31,8 @@ func Test_Mysql(t *testing.T) {
 			MaxIdle:     16,
 			MaxOpen:     128,
 			MaxLifeTime: time.Second * 300,
-			SlowSqlTime: 0,
+			SlowSqlTime: 1,
 			SlowLogger:  "slow",
-			ErrLogger:   "error",
 			StatLogger:  "stat",
 		},
 	}
@@ -48,5 +46,9 @@ func Test_Mysql(t *testing.T) {
 	}
 
 	fmt.Println(mysqlPoolMap)
+
+	var rets []int64
+	fmt.Println(Get("default-slave").Raw("SELECT * FROM `guild_help_request` WHERE time >= 1743326348 AND `guild_help_request`.`deleted_at` IS NULL ORDER BY id ASC LIMIT 1").Scan(&rets))
+
 	time.Sleep(time.Second * 10)
 }

@@ -24,7 +24,6 @@ type MysqlConf struct {
 	SlowSqlTime time.Duration
 
 	SlowLogger string
-	ErrLogger  string
 	StatLogger string
 }
 
@@ -52,12 +51,12 @@ func InitMysql(configs map[string]MysqlConf) error {
 
 		gdb, err := gorm.Open(mysql.Open(dsn), gormConfig)
 		if err != nil {
-			log.Get(config.ErrLogger).Fatal("mysql:", err, dsn, node)
+			log.Get("error").Fatal("mysql:", err, dsn, node)
 			return err
 		}
 
 		if sqlDb, err := gdb.DB(); err != nil {
-			log.Get(config.ErrLogger).Fatal("mysql:", err, dsn, node)
+			log.Get("error").Fatal("mysql:", err, dsn, node)
 			return err
 		} else {
 			sqlDb.SetMaxIdleConns(config.MaxIdle)
