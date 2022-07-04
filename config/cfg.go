@@ -45,7 +45,7 @@ func InitConfig(paths ...string) error {
 				}
 			}
 			if !isSupport {
-				return fmt.Errorf("viper not support the format \".%s\"", ext)
+				return fmt.Errorf("viper not support the format \".%s\", path:%s", ext, path)
 			}
 
 			v := viper.New()
