@@ -19,6 +19,9 @@ const (
 	CFG_REDIS_READ_TIMEOUT    = "readtimeout"
 	CFG_REDIS_WRITE_TIMEOUT   = "writetimeout"
 	CFG_REDIS_TEST_INTERVAL   = "testinterval"
+
+	CFG_REDIS_ERRORLOG = "errorlog"
+	CFG_REDIS_STATLOG  = "statlog"
 )
 
 var Redis map[string]redis.RedisConf = make(map[string]redis.RedisConf)
@@ -91,6 +94,18 @@ func parseRedis(v *viper.Viper) error {
 			return fmt.Errorf("REDIS config file not contains \"%s\"", CFG_REDIS_TEST_INTERVAL)
 		} else {
 			c.TestInterval, _ = time.ParseDuration(s.(string))
+		}
+
+		if s, ok := vv[CFG_REDIS_ERRORLOG]; !ok {
+			return fmt.Errorf("REDIS config file not contains \"%s\"", CFG_REDIS_ERRORLOG)
+		} else {
+			c.ErrLogger = s.(string)
+		}
+
+		if s, ok := vv[CFG_REDIS_STATLOG]; !ok {
+			return fmt.Errorf("REDIS config file not contains \"%s\"", CFG_REDIS_STATLOG)
+		} else {
+			c.StatLogger = s.(string)
 		}
 
 		Redis[k] = c
