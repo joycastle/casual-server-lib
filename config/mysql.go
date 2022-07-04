@@ -20,7 +20,6 @@ const (
 	CFG_MYSQL_MAXLIFETIME = "maxlifetime"
 	CFG_MYSQL_SLOWLOGTIME = "slowsqltime"
 	CFG_MYSQL_SLOWLOG     = "slowlog"
-	CFG_MYSQL_ERRORLOG    = "errorlog"
 	CFG_MYSQL_STATLOG     = "statlog"
 )
 
@@ -100,12 +99,6 @@ func parseMysql(v *viper.Viper) error {
 			return fmt.Errorf("MYSQL config file not contains \"%s\"", CFG_MYSQL_SLOWLOG)
 		} else {
 			c.SlowLogger = s.(string)
-		}
-
-		if s, ok := vv[CFG_MYSQL_ERRORLOG]; !ok {
-			return fmt.Errorf("MYSQL config file not contains \"%s\"", CFG_MYSQL_ERRORLOG)
-		} else {
-			c.ErrLogger = s.(string)
 		}
 
 		if s, ok := vv[CFG_MYSQL_STATLOG]; !ok {

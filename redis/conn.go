@@ -26,7 +26,6 @@ type RedisConf struct {
 	WriteTimeout   time.Duration
 	TestInterval   time.Duration
 
-	ErrLogger  string
 	StatLogger string
 }
 
@@ -67,20 +66,20 @@ func GetRedisConn(sn string, config RedisConf) *redis.Pool {
 			conn, err = redis.DialTimeout("tcp", addr, config.ConnectTimeout, config.ReadTimeout, config.WriteTimeout)
 
 			if err != nil {
-				log.Get(config.ErrLogger).Warnf("Redis connect failed. %s, addr:%s", err, addr)
+				log.Get("error").Warnf("Redis connect failed. %s, addr:%s", err, addr)
 				return nil, err
 			}
 
 			if config.Password != "" {
 				if _, err := conn.Do("AUTH", config.Password); err != nil {
-					log.Get(config.ErrLogger).Warnf("Redis auth failed. %s, addr:%s", err, addr)
+					log.Get("error").Warnf("Redis auth failed. %s, addr:%s", err, addr)
 					conn.Close()
 					return nil, err
 				}
 			}
 
 			if _, err = conn.Do("PING"); err != nil {
-				log.Get(config.ErrLogger).Warnf("Redis ping failed. %s, addr:%s", err, addr)
+				log.Get("error").Warnf("Redis ping failed. %s, addr:%s", err, addr)
 				return nil, err
 			}
 
@@ -91,7 +90,7 @@ func GetRedisConn(sn string, config RedisConf) *redis.Pool {
 				return nil
 			}
 			if _, err := conn.Do("PING"); err != nil {
-				log.Get(config.ErrLogger).Warnf("Redis TestOnBorrow failed. %s", err)
+				log.Get("error").Warnf("Redis TestOnBorrow failed. %s", err)
 				return err
 			}
 			return nil
