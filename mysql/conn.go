@@ -30,6 +30,7 @@ type MysqlConf struct {
 
 var (
 	mysqlPoolMap map[string]*gorm.DB = make(map[string]*gorm.DB)
+	mysqlNodes   []string
 )
 
 func InitMysql(configs map[string]MysqlConf) error {
@@ -99,6 +100,7 @@ func InitMysql(configs map[string]MysqlConf) error {
 		}
 
 		mysqlPoolMap[node] = gdb
+		mysqlNodes = append(mysqlNodes, node)
 	}
 
 	return nil
@@ -108,6 +110,7 @@ func Get(sn string) *gorm.DB {
 	if g, ok := mysqlPoolMap[sn]; ok {
 		return g
 	}
+	log.Get("error").Fatalf(fmt.Sprintf("mysql node \"%s\" not exists, choose from %v", sn, mysqlNodes))
 	panic(fmt.Sprintf("mysql: not exists node:%s", sn))
 	return nil
 }
