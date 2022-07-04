@@ -42,10 +42,10 @@ func InitMysql(configs map[string]MysqlConf) error {
 
 		gormConfig := &gorm.Config{}
 		if config.SlowLogger != "" && config.SlowSqlTime > 0 {
-			gormConfig.Logger = logger.New(log.Get(config.SlowLogger), logger.Config{
-				SlowThreshold: config.SlowSqlTime,
-				LogLevel:      logger.Warn,
-				//IgnoreRecordNotFoundError: false,
+			gormConfig.Logger = logger.New(log.Get(config.SlowLogger).Logger, logger.Config{
+				SlowThreshold:             config.SlowSqlTime,
+				LogLevel:                  logger.Warn,
+				IgnoreRecordNotFoundError: true,
 				//Colorful:                  true,
 			})
 		}
