@@ -153,6 +153,11 @@ func (fc *FLowControl) reload() {
 			}
 			fc.flowWhiteListMap[v.ConfigID][v.SubID] = struct{}{}
 		}
+
+		log.Get("run").Info("flowcontrol:", "flow map", fc.flowMap)
+		log.Get("run").Info("flowcontrol:", "flowconfig map", fc.flowConfigMap)
+		log.Get("run").Info("flowcontrol:", "flowwhitelist map", fc.flowWhiteListMap)
+
 		fc.mu.Unlock()
 
 		cost := time.Since(start).Nanoseconds() / 1000000
