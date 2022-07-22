@@ -16,7 +16,7 @@ type Format struct {
 	v          string
 	vt         int
 	vint       int
-	vfloat32   float32
+	vfloat64   float64
 	vintslice  []int
 	vintslice2 [][]int
 }
@@ -37,8 +37,8 @@ func (f *Format) ToIntSlice() []int {
 	return f.vintslice
 }
 
-func (f *Format) ToFloat32() float32 {
-	return f.vfloat32
+func (f *Format) ToFloat64() float64 {
+	return f.vfloat64
 }
 
 func (f *Format) ToIntSlice2() [][]int {
@@ -47,11 +47,12 @@ func (f *Format) ToIntSlice2() [][]int {
 
 func (f *Format) Parse() error {
 	switch f.vt {
-	case FormatType_Int:
+	case FormatType_INT:
 		if err := f.parseInt(); err != nil {
 			return err
 		}
 	}
+	return nil
 }
 
 func (f *Format) parseInt() error {
@@ -75,18 +76,18 @@ func (f *Format) parseIntSlice() error {
 		if err != nil {
 			return err
 		}
-		out = append(out, v)
+		out = append(out, d)
 	}
 	f.vintslice = out
 	return nil
 }
 
-func (f *Format) parseFloat32() error {
+func (f *Format) parseFloat64() error {
 	d, err := strconv.ParseFloat(f.v, 32)
 	if err != nil {
 		return err
 	}
-	f.vfloat32 = d
+	f.vfloat64 = d
 	return nil
 }
 
