@@ -36,6 +36,23 @@ func NewFlowControl() *FLowControl {
 	}
 }
 
+func (fc *FLowControl) SetMysqlNode(master, slave string) *FLowControl {
+	fc.dbMaster = master
+	fc.dbSlave = slave
+	return fc
+}
+
+func (fc *FLowControl) Use(names ...string) *FLowControl {
+	for _, name := range names {
+		fc.names = append(fc.names, name)
+	}
+	return fc
+}
+
+func (fc *FLowControl) Startup() {
+	go fc.reload()
+}
+
 func (fc *FLowControl) reload() {
 	for {
 		start := time.Now()
@@ -204,89 +221,4 @@ func (fc *FLowControl) IsHit(ftype string, idxs string, idxi int64) (string, boo
 		}
 	}
 	return "none", false
-}
-
-func (fc *FLowControl) SetMysqlNode(master, slave string) *FLowControl {
-	fc.dbMaster = master
-	fc.dbSlave = slave
-	return fc
-}
-
-func (fc *FLowControl) Use(names ...string) *FLowControl {
-	for _, name := range names {
-		fc.names = append(fc.names, name)
-	}
-	return fc
-}
-
-func (fc *FLowControl) Startup() {
-	go fc.reload()
-}
-
-func (fc *FLowControl) CreateFlow(name string, desc string, author string) (Flow, error) {
-	var flow Flow
-	flow.Name = name
-	flow.Desc = desc
-	flow.Author = author
-	flow.AddTime = time.Now().Unix()
-	flow.UpdateTime = time.Now().Unix()
-
-	if r := mysql.Get(fc.dbMaster).Create(&flow); r.Error != nil {
-		return flow, r.Error
-	}
-	return flow, nil
-}
-
-func (fc *FLowControl) GetFlowByName(name string) (Flow, error) {
-	var flow Flow
-	if r := mysql.Get(fc.dbSlave).Where("name = ?", name).Limit(1).Find(&flow); r.Error != nil {
-		return flow, r.Error
-	}
-	return flow, nil
-}
-
-func (fc *FLowControl) CreateFlowConfig(flowID uint64, strategy string, value string) (FlowConfig, error) {
-	var flowc FlowConfig
-	flowc.FlowID = flowID
-	flowc.Strategy = strategy
-	flowc.Value = value
-	flowc.AddTime = time.Now().Unix()
-	flowc.UpdateTime = time.Now().Unix()
-
-	if r := mysql.Get(fc.dbMaster).Create(&flowc); r.Error != nil {
-		return flowc, r.Error
-	}
-	return flowc, nil
-}
-
-func (fc *FLowControl) GetFlowConfigByFlowIDAndStrategy(flowID uint64, strategy string) (FlowConfig, error) {
-	var flowc FlowConfig
-	if r := mysql.Get(fc.dbSlave).Where("flow_id = ? AND strategy = ?", flowID, strategy).Limit(1).Find(&flowc); r.Error != nil {
-		return flowc, r.Error
-	}
-	return flowc, nil
-}
-
-func (fc *FLowControl) OpenFlowConfig(configID uint64) error {
-	if r := mysql.Get(fc.dbMaster).Model(&FlowConfig{}).Where("id = ?", configID).Limit(1).Update("open", 1); r.Error != nil {
-		return r.Error
-	}
-	return nil
-}
-
-func (fc *FLowControl) CloseFlowConfig(configID uint64) error {
-	if r := mysql.Get(fc.dbMaster).Model(&FlowConfig{}).Where("id = ?", configID).Limit(1).Update("open", 0); r.Error != nil {
-		return r.Error
-	}
-	return nil
-}
-
-func (fc *FLowControl) CreateFlowWhiteList(configID uint64, subID string) (FlowWhiteList, error) {
-	var fwl FlowWhiteList
-	fwl.ConfigID = configID
-	fwl.SubID = subID
-	if r := mysql.Get(fc.dbMaster).Create(&fwl); r.Error != nil {
-		return fwl, r.Error
-	}
-	return fwl, nil
 }

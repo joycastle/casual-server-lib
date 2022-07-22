@@ -51,56 +51,56 @@ func TestCreateTable(t *testing.T) {
 	fc := NewFlowControl().SetMysqlNode("default-master", "default-slave").Use("robot-server")
 	fc.Startup()
 
-	flow, err := fc.CreateFlow("robot-server", "机器人服务流量控制", "levin")
+	flow, err := CreateFlow("default-master", "robot-server", "机器人服务流量控制", "levin")
 	if err != nil && !strings.Contains(err.Error(), "Error 1062: Duplicate entry") {
 		t.Fatal(err)
 	}
 	if flow.ID == 0 {
-		flow, err = fc.GetFlowByName("robot-server")
+		flow, err = GetFlowByName("default-master", "robot-server")
 		if err != nil {
 			t.Fatal(err)
 		}
 	}
 
-	flowConfig1, err := fc.CreateFlowConfig(flow.ID, MethodRand, "20")
+	flowConfig1, err := CreateFlowConfig("default-master", flow.ID, MethodRand, "100")
 	if err != nil && !strings.Contains(err.Error(), "Error 1062: Duplicate entry") {
 		t.Fatal(err)
 	}
 	if flowConfig1.ID == 0 {
-		flowConfig1, err = fc.GetFlowConfigByFlowIDAndStrategy(flow.ID, MethodRand)
+		flowConfig1, err = GetFlowConfigByFlowIDAndStrategy("default-master", flow.ID, MethodRand)
 		if err != nil {
 			t.Fatal(err)
 		}
 	}
-	if err := fc.OpenFlowConfig(flowConfig1.ID); err != nil {
+	if err := OpenFlowConfig("default-master", flowConfig1.ID); err != nil {
 		t.Fatal(err)
 	}
 
-	flowConfig2, err := fc.CreateFlowConfig(flow.ID, MethodRemainder10, "0|1|2|3|5")
+	flowConfig2, err := CreateFlowConfig("default-master", flow.ID, MethodRemainder10, "0|1|2|3|5")
 	if err != nil && !strings.Contains(err.Error(), "Error 1062: Duplicate entry") {
 		t.Fatal(err)
 	}
 	if flowConfig2.ID == 0 {
-		flowConfig2, err = fc.GetFlowConfigByFlowIDAndStrategy(flow.ID, MethodRemainder10)
+		flowConfig2, err = GetFlowConfigByFlowIDAndStrategy("default-master", flow.ID, MethodRemainder10)
 		if err != nil {
 			t.Fatal(err)
 		}
 	}
-	if err := fc.OpenFlowConfig(flowConfig2.ID); err != nil {
+	if err := OpenFlowConfig("default-master", flowConfig2.ID); err != nil {
 		t.Fatal(err)
 	}
 
-	flowConfig3, err := fc.CreateFlowConfig(flow.ID, MethodWhiteList, "use white")
+	flowConfig3, err := CreateFlowConfig("default-master", flow.ID, MethodWhiteList, "use white")
 	if err != nil && !strings.Contains(err.Error(), "Error 1062: Duplicate entry") {
 		t.Fatal(err)
 	}
 	if flowConfig3.ID == 0 {
-		flowConfig3, err = fc.GetFlowConfigByFlowIDAndStrategy(flow.ID, MethodWhiteList)
+		flowConfig3, err = GetFlowConfigByFlowIDAndStrategy("default-master", flow.ID, MethodWhiteList)
 		if err != nil {
 			t.Fatal(err)
 		}
 	}
-	if err := fc.OpenFlowConfig(flowConfig3.ID); err != nil {
+	if err := OpenFlowConfig("default-master", flowConfig3.ID); err != nil {
 		t.Fatal(err)
 	}
 
@@ -116,11 +116,11 @@ func TestCreateTable(t *testing.T) {
 		t.Fatal(1, s)
 	}
 
-	if err := fc.CloseFlowConfig(flowConfig1.ID); err != nil {
+	if err := CloseFlowConfig("default-master", flowConfig1.ID); err != nil {
 		t.Fatal(err)
 	}
 
-	if err := fc.CloseFlowConfig(flowConfig3.ID); err != nil {
+	if err := CloseFlowConfig("default-master", flowConfig3.ID); err != nil {
 		t.Fatal(err)
 	}
 
@@ -134,16 +134,16 @@ func TestCreateTable(t *testing.T) {
 			}
 		} else {
 			if s, hit := fc.IsHit("robot-server", fmt.Sprintf("%d", i), int64(i)); hit {
-				t.Fatal(i, s)
+				t.Fatal(y, i, s)
 			}
 		}
 	}
 
-	if err := fc.CloseFlowConfig(flowConfig2.ID); err != nil {
+	if err := CloseFlowConfig("default-master", flowConfig2.ID); err != nil {
 		t.Fatal(err)
 	}
 
-	if err := fc.OpenFlowConfig(flowConfig3.ID); err != nil {
+	if err := OpenFlowConfig("default-master", flowConfig3.ID); err != nil {
 		t.Fatal(err)
 	}
 
@@ -151,6 +151,25 @@ func TestCreateTable(t *testing.T) {
 
 	for i := 0; i < 2000; i++ {
 		if s, hit := fc.IsHit("robot-server", fmt.Sprintf("%d", i), int64(i)); !hit {
+			t.Fatal(i, s)
+		}
+	}
+
+	if err := CloseFlowConfig("default-master", flowConfig2.ID); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := CloseFlowConfig("default-master", flowConfig3.ID); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := OpenFlowConfig("default-master", flowConfig1.ID); err != nil {
+		t.Fatal(err)
+	}
+	time.Sleep(time.Second * 20)
+
+	for i := 0; i < 2000; i++ {
+		if s, hit := fc.IsHit("robot-server", fmt.Sprintf("%d", i), int64(i)); !hit || s != MethodRand {
 			t.Fatal(i, s)
 		}
 	}
